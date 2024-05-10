@@ -56,7 +56,7 @@ func (p *CachingReceiptsProvider) deleteFetchingLock(blockHash common.Hash) {
 func (p *CachingReceiptsProvider) FetchReceipts(ctx context.Context, blockInfo eth.BlockInfo, txHashes []common.Hash) (types.Receipts, error) {
 	block := eth.ToBlockID(blockInfo)
 	if r, ok := p.cache.Get(block.Hash); ok {
-		log.Info("FetchReceipts get receipts from cache", block.Number)
+		log.Info("FetchReceipts get receipts from cache", "number", block.Number)
 		return r, nil
 	}
 
