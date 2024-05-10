@@ -60,6 +60,7 @@ func (l1t *L1Traversal) NextL1Block(_ context.Context) (eth.L1BlockRef, error) {
 func (l1t *L1Traversal) AdvanceL1Block(ctx context.Context) error {
 	origin := l1t.block
 	nextL1Origin, err := l1t.l1Blocks.L1BlockRefByNumber(ctx, origin.Number+1)
+	log.Info("AdvanceL1Block", "next", origin.Number+1)
 	if errors.Is(err, ethereum.NotFound) {
 		l1t.log.Debug("can't find next L1 block info (yet)", "number", origin.Number+1, "origin", origin)
 		return io.EOF
@@ -81,8 +82,10 @@ func (l1t *L1Traversal) AdvanceL1Block(ctx context.Context) error {
 	}
 
 	go func() {
+		log.Info("Try to cache future block & receipts", "next", origin.Number+3)
 		// Try to cache future block & receipts
-		if futureL1Origin, err := l1t.l1Blocks.L1BlockRefByNumber(ctx, origin.Number+5); err != nil {
+		if futureL1Origin, err := l1t.l1Blocks.L1BlockRefByNumber(ctx, origin.Number+3); err != nil {
+			log.Info("Succeed to cache block. Now try to cache receipts", "next", origin.Number+3)
 			_, _, _ = l1t.l1Blocks.FetchReceipts(ctx, futureL1Origin.Hash)
 		}
 	}()
