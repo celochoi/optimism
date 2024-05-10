@@ -80,6 +80,13 @@ func (l1t *L1Traversal) AdvanceL1Block(ctx context.Context) error {
 		return NewCriticalError(fmt.Errorf("failed to update L1 sysCfg with receipts from block %s: %w", nextL1Origin, err))
 	}
 
+	go func() {
+		// Try to cache future block & receipts
+		if futureL1Origin, err := l1t.l1Blocks.L1BlockRefByNumber(ctx, origin.Number+5); err != nil {
+			_, _, _ = l1t.l1Blocks.FetchReceipts(ctx, futureL1Origin.Hash)
+		}
+	}()
+
 	l1t.block = nextL1Origin
 	l1t.done = false
 	return nil
