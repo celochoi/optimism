@@ -66,7 +66,7 @@ func NewEngineAPIClient(rpc client.RPC, l log.Logger, evp EngineVersionProvider)
 		RPC:     rpc,
 		log:     l,
 		evp:     evp,
-		timeout: time.Second * 5,
+		timeout: time.Second * 60,
 	}
 }
 
